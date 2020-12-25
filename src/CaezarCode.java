@@ -1,3 +1,8 @@
+import java.util.Iterator;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 public class CaezarCode {
     public static int englishAlfabetSize = ('z' - 'a') + 1;
     public static int russianAlfabetSize = ('я' - 'а') + 1;
@@ -70,6 +75,19 @@ public class CaezarCode {
         return strBox.toString();
     }
     public static void main(String[] args) {
+        Stream<String> stream = Stream.of(args[0].toLowerCase().replace(" ", "").split("")).parallel();
+        Map<String, Long> wordFreq = stream
+                .collect(Collectors.groupingBy(String::toString, Collectors.counting()));
+
+        Iterator<Map.Entry<String, Long>> iterator = wordFreq.entrySet().stream().sorted(Map.Entry.<String, Long>comparingByValue().reversed()).iterator();
+        while (iterator.hasNext())
+        {
+            Map.Entry<String, Long> pair = iterator.next();
+            String key = pair.getKey();
+            Long value = pair.getValue();
+            System.out.println(key + ": " + value);
+        }
+        System.out.println(wordFreq.size());
         System.out.println("Кодирование");
         String coded = getCodingIncodMessage(args[0], Integer.parseInt(args[1]));
         System.out.println(args[0] + " -> " + coded);
